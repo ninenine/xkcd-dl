@@ -66,6 +66,7 @@ namespace xkcd
                     {
                         await contentStream.CopyToAsync(fileStream);
                     }
+					Console.WriteLine("Download Complete");
                 }
             }
             catch (Exception ex)
