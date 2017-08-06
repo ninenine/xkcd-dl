@@ -59,14 +59,22 @@ namespace xkcd
                     string img_url = result.img;
                     string file = img_url.Split('/').Last();
                     string fileUploadPath = DownloadDir + "/" + file;
-                    Console.WriteLine("Downloading comic {0}-{1}:{2}", result.num, result.title, result.img);
-                    using (var client = new HttpClient())
-                    using (var contentStream = await client.GetStreamAsync(img_url))
-                    using (var fileStream = new FileStream(fileUploadPath, FileMode.Create, FileAccess.Write, FileShare.None, 1048576, true))
+                    FileInfo fInfo = new FileInfo(fileUploadPath);
+                    if (fInfo.Exists)
                     {
-                        await contentStream.CopyToAsync(fileStream);
+                        Console.WriteLine("Comic already downloaded, moving to next...");
                     }
-					Console.WriteLine("Download Complete");
+                    else
+                    {
+                        Console.WriteLine("Downloading comic {0}-{1}:{2}", result.num, result.title, result.img);
+                        using (var client = new HttpClient())
+                        using (var contentStream = await client.GetStreamAsync(img_url))
+                        using (var fileStream = new FileStream(fileUploadPath, FileMode.Create, FileAccess.Write, FileShare.None, 1048576, true))
+                        {
+                            await contentStream.CopyToAsync(fileStream);
+                        }
+                        Console.WriteLine("Download Complete");
+                    }
                 }
             }
             catch (Exception ex)
